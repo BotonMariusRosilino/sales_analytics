@@ -1,0 +1,107 @@
+import pandas as pd
+import numpy as np
+from sklearn.preprocessing import MinMaxScaler
+
+
+
+data = pd.read_csv('nom_de_votre_fichier.csv')
+
+
+
+mean_price = data['Prix'].mean()
+std_price = data['Prix'].std()
+synthetic_prices = np.random.normal(mean_price, std_price, size=1000)
+
+min_age = data['Âge'].min()
+max_age = data['Âge'].max()
+synthetic_ages = np.random.uniform(min_age, max_age, size=1000)
+
+
+synthetic_data = pd.DataFrame({'Prix': synthetic_prices, 'Âge': synthetic_ages})
+new_data = pd.concat([data, synthetic_data], axis=0)
+
+new_data.to_csv('nom_de_votre_fichier.csv', index=False)
+
+
+
+synthetic_eye_colors = np.random.multinomial(n=1, pvals=[0.3, 0.5, 0.2], size=1000)
+synthetic_eye_colors_df = pd.DataFrame(synthetic_eye_colors, columns=['Bleu', 'Marron', 'Vert'])
+new_data = pd.concat([data, synthetic_eye_colors_df], axis=1)
+new_data.to_csv('nom_de_votre_fichier.csv', index=False)
+
+new_data.to_csv('chemin_vers_votre_fichier.csv', index=False)
+
+
+
+import pandas as pd
+import numpy as np
+
+def augmenter_variables_qualitatives(data, nom_colonne_qualitative, taille=1000):
+    """
+    Cette fonction augmente les variables qualitatives d'une base de données avec des données synthétiques
+    en utilisant les modalités minimales et maximales de la variable qualitative existante.
+    
+    data: DataFrame pandas, la base de données existante.
+    nom_colonne_qualitative: str, le nom de la colonne contenant la variable qualitative.
+    taille: int, le nombre de lignes synthétiques à ajouter (par défaut 1000).
+    
+    returns: DataFrame pandas, la base de données avec les nouvelles lignes synthétiques ajoutées.
+    """
+    # Récupérer les modalités minimales et maximales dans la colonne de la variable qualitative existante
+    modalites_min = data[nom_colonne_qualitative].min()
+    modalites_max = data[nom_colonne_qualitative].max()
+    
+    # Générer les nouvelles données synthétiques pour la variable qualitative
+    synth_data = pd.DataFrame()
+    for i in range(taille):
+        # Choisir une modalité aléatoire entre les modalités minimales et maximales
+        synth_modalite = np.random.choice([modalites_min, modalites_max])
+        
+        # Ajouter les données synthétiques à la base de données synthétique
+        synth_data = synth_data.append({nom_colonne_qualitative: synth_modalite}, ignore_index=True)
+    
+    # Ajouter les nouvelles données synthétiques à la base de données existante
+    new_data = pd.concat([data, synth_data], axis=0)
+    
+    # Réinitialiser l'index de la base de données
+    new_data = new_data.reset_index(drop=True)
+    
+    return new_data
+................................................
+import pandas as pd
+import numpy as np
+
+def augmenter_variables_quantitatives(data, nom_colonne_quantitative, taille=1000):
+    """
+    Cette fonction augmente les variables quantitatives d'une base de données avec des données synthétiques
+    en utilisant les valeurs minimales et maximales de la variable quantitative existante.
+    
+    data: DataFrame pandas, la base de données existante.
+    nom_colonne_quantitative: str, le nom de la colonne contenant la variable quantitative.
+    taille: int, le nombre de lignes synthétiques à ajouter (par défaut 1000).
+    
+    returns: DataFrame pandas, la base de données avec les nouvelles lignes synthétiques ajoutées.
+    """
+    # Récupérer les valeurs minimales et maximales dans la colonne de la variable quantitative existante
+    val_min = data[nom_colonne_quantitative].min()
+    val_max = data[nom_colonne_quantitative].max()
+    
+    # Générer les nouvelles données synthétiques pour la variable quantitative
+    synth_data = pd.DataFrame()
+    for i in range(taille):
+        # Générer une valeur aléatoire entre les valeurs minimales et maximales
+        synth_val = np.random.uniform(low=val_min, high=val_max)
+        
+        # Ajouter les données synthétiques à la base de données synthétique
+        synth_data = synth_data.append({nom_colonne_quantitative: synth_val}, ignore_index=True)
+    
+    # Ajouter les nouvelles données synthétiques à la base de données existante
+    new_data = pd.concat([data, synth_data], axis=0)
+    
+    # Réinitialiser l'index de la base de données
+    new_data = new_data.reset_index(drop=True)
+    
+    return new_data
+
+
+
